@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { supabase } from "@/lib/supabase";
 import { Sorteio, SorteioCadastro } from "@/types/supabase";
 import ParticipantesTable from "@/components/ParticipantesTable";
@@ -8,7 +8,14 @@ import Loading from "@/components/Loading";
 import ErrorMessage from "@/components/ErrorMessage";
 import Link from "next/link";
 
-export default function HomePage() {
+interface PageProps {
+  params: Promise<{ accountId: string }>;
+}
+
+export default function AccountPage({ params }: PageProps) {
+  const resolvedParams = use(params);
+  const accountId = resolvedParams.accountId;
+
   const [sorteios, setSorteios] = useState<SorteioCadastro[]>([]);
   const [participantes, setParticipantes] = useState<Sorteio[]>([]);
   const [selectedSorteio, setSelectedSorteio] = useState<string>("");
@@ -16,13 +23,14 @@ export default function HomePage() {
   const [loadingParticipantes, setLoadingParticipantes] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Carregar sorteios disponíveis
+  // Carregar sorteios filtrados por accountId
   useEffect(() => {
     async function fetchSorteios() {
       try {
         const { data, error } = await supabase
           .from("sorteio_cadastro")
           .select("*")
+          .eq("account_id", accountId)
           .order("created_at", { ascending: false });
 
         if (error) throw error;
@@ -39,7 +47,7 @@ export default function HomePage() {
     }
 
     fetchSorteios();
-  }, []);
+  }, [accountId]);
 
   // Carregar participantes quando o sorteio for selecionado
   useEffect(() => {
@@ -52,6 +60,7 @@ export default function HomePage() {
           .from("sorteio")
           .select("*")
           .eq("sorteio_nome", selectedSorteio)
+          .eq("account_id", accountId)
           .order("created_at", { ascending: false });
 
         if (error) throw error;
@@ -65,7 +74,7 @@ export default function HomePage() {
     }
 
     fetchParticipantes();
-  }, [selectedSorteio]);
+  }, [selectedSorteio, accountId]);
 
   if (loading) {
     return (
@@ -79,13 +88,18 @@ export default function HomePage() {
     <div className="container mx-auto px-4 py-8">
       <div className="mb-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-          <h1 className="text-3xl font-bold">Gerenciamento de Sorteios</h1>
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <h1 className="text-3xl font-bold">Gerenciamento de Sorteios</h1>
+            </div>
+            <p className="text-gray-600 mt-1">Account ID: {accountId}</p>
+          </div>
           <div className="flex gap-2">
             <Link
-              href="/sorteios"
-              className="bg-blue-700 hover:bg-blue-800 text-white font-medium px-4 py-2 rounded-lg transition-colors"
+              href={`/${accountId}/sorteios`}
+              className="bg-purple-700 hover:bg-purple-800 text-white font-medium px-4 py-2 rounded-lg transition-colors"
             >
-              Ver Todos os Sorteios
+              Lista de Sorteios
             </Link>
           </div>
         </div>
@@ -95,21 +109,15 @@ export default function HomePage() {
         {sorteios.length === 0 ? (
           <div className="text-center py-12 bg-gray-50 rounded-lg">
             <p className="text-gray-600 text-lg mb-4">
-              Nenhum sorteio cadastrado ainda.
+              Nenhum sorteio encontrado para o Account ID: {accountId}
             </p>
-            <Link
-              href="/sorteios"
-              className="text-blue-600 hover:text-blue-700 underline"
-            >
-              Ver página de sorteios
-            </Link>
           </div>
         ) : (
           <>
             <div className="mb-6">
               <label
                 htmlFor="sorteio-select"
-                className="block text-sm font-medium text-gray-800 mb-2"
+                className="block text-sm font-medium text-gray-700 mb-2"
               >
                 Selecione um Sorteio:
               </label>
@@ -117,7 +125,7 @@ export default function HomePage() {
                 id="sorteio-select"
                 value={selectedSorteio}
                 onChange={(e) => setSelectedSorteio(e.target.value)}
-                className="w-full md:w-96 px-4 py-2 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent text-gray-900 bg-white font-medium"
+                className="w-full md:w-96 px-4 py-2 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent text-gray-900 bg-white"
               >
                 {sorteios.map((sorteio) => (
                   <option key={sorteio.id} value={sorteio.nome_sorteio}>

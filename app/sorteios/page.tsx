@@ -27,7 +27,7 @@ export default async function SorteiosPage() {
         <h1 className="text-3xl font-bold">Sorteios Cadastrados</h1>
         <Link
           href="/"
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+          className="bg-blue-700 hover:bg-blue-800 text-white font-medium px-4 py-2 rounded-lg transition-colors"
         >
           Ver Participantes
         </Link>
@@ -58,18 +58,29 @@ export default async function SorteiosPage() {
               <h2 className="text-xl font-semibold mb-2 text-gray-900">
                 {sorteio.nome_sorteio}
               </h2>
+              <p className="text-sm text-gray-600 mb-2">
+                Account ID: {sorteio.account_id}
+              </p>
               <p className="text-sm text-gray-600 mb-4">
                 Criado em:{" "}
                 {new Date(sorteio.created_at).toLocaleDateString("pt-BR")}
               </p>
-              <Link
-                href={`/participantes/${encodeURIComponent(
-                  sorteio.nome_sorteio
-                )}`}
-                className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors w-full text-center"
-              >
-                Ver Participantes
-              </Link>
+              <div className="flex gap-2">
+                <Link
+                  href={`/participantes/${encodeURIComponent(
+                    sorteio.nome_sorteio
+                  )}`}
+                  className="inline-block bg-blue-700 hover:bg-blue-800 text-white font-medium px-3 py-2 rounded-lg transition-colors flex-1 text-center text-sm"
+                >
+                  Ver Participantes
+                </Link>
+                <Link
+                  href={`/${sorteio.account_id}/sorteios`}
+                  className="inline-block bg-purple-700 hover:bg-purple-800 text-white font-medium px-3 py-2 rounded-lg transition-colors flex-1 text-center text-sm"
+                >
+                  Sorteios do Account
+                </Link>
+              </div>
             </div>
           ))}
         </div>

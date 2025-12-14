@@ -31,15 +31,18 @@ export default function ParticipantesTable({
   // Função de filtro global personalizada
   const globalFilterFn = (row: any, columnId: string, value: string) => {
     const search = value.toLowerCase();
-    
+
     // Buscar em nome, telefone e número da sorte
-    const nome = row.getValue('nome')?.toString().toLowerCase() || '';
-    const telefone = row.getValue('telefone')?.toString().toLowerCase() || '';
-    const numeroSorte = row.getValue('numero_sorte')?.toString().toLowerCase() || '';
-    
-    return nome.includes(search) || 
-           telefone.includes(search) || 
-           numeroSorte.includes(search);
+    const nome = row.getValue("nome")?.toString().toLowerCase() || "";
+    const telefone = row.getValue("telefone")?.toString().toLowerCase() || "";
+    const numeroSorte =
+      row.getValue("numero_sorte")?.toString().toLowerCase() || "";
+
+    return (
+      nome.includes(search) ||
+      telefone.includes(search) ||
+      numeroSorte.includes(search)
+    );
   };
 
   const columns = useMemo<ColumnDef<Sorteio>[]>(
@@ -49,21 +52,21 @@ export default function ParticipantesTable({
         header: "Nome",
         cell: (info) => info.getValue() as string,
         enableGlobalFilter: true,
-        filterFn: 'includesString',
+        filterFn: "includesString",
       },
       {
         accessorKey: "telefone",
         header: "Telefone",
         cell: (info) => info.getValue() as string,
         enableGlobalFilter: true,
-        filterFn: 'includesString',
+        filterFn: "includesString",
       },
       {
         accessorKey: "numero_sorte",
         header: "Número da Sorte",
         cell: (info) => info.getValue() as number,
         enableGlobalFilter: true,
-        filterFn: 'includesString',
+        filterFn: "includesString",
       },
       {
         accessorKey: "created_at",
@@ -79,7 +82,7 @@ export default function ParticipantesTable({
           });
         },
         enableGlobalFilter: false,
-        filterFn: 'includesString',
+        filterFn: "includesString",
       },
     ],
     []
