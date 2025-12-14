@@ -16,6 +16,18 @@ export interface Sorteio {
   numero_sorte: number;
 }
 
+export interface LinksQrCode {
+  id: string; // uuid
+  account_id: number; // numeric
+  phone_number: string; // text
+  message: string; // text
+  whatsapp_link: string; // text
+  qrcode_webhook_url: string; // text
+  cliques: number; // numeric (default 0)
+  sorteio_nome?: string; // text (opcional)
+  created_at: string; // timestamp with time zone
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -28,6 +40,11 @@ export interface Database {
         Row: Sorteio;
         Insert: Omit<Sorteio, 'id' | 'created_at'>;
         Update: Partial<Omit<Sorteio, 'id' | 'created_at'>>;
+      };
+      links_qr_code: {
+        Row: LinksQrCode;
+        Insert: Omit<LinksQrCode, 'id' | 'created_at'> & { cliques?: number };
+        Update: Partial<Omit<LinksQrCode, 'id' | 'created_at'>>;
       };
     };
   };

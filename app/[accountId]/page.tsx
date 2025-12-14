@@ -94,12 +94,24 @@ export default function AccountPage({ params }: PageProps) {
             </div>
             <p className="text-gray-600 mt-1">Account ID: {accountId}</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Link
               href={`/${accountId}/sorteios`}
               className="bg-purple-700 hover:bg-purple-800 text-white font-medium px-4 py-2 rounded-lg transition-colors"
             >
               Lista de Sorteios
+            </Link>
+            <Link
+              href={`/${accountId}/criar-sorteio`}
+              className="bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-lg transition-colors"
+            >
+              🎲 Criar Sorteio + QR
+            </Link>
+            <Link
+              href={`/${accountId}/qr-links`}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition-colors"
+            >
+              📱 Ver Links QR
             </Link>
           </div>
         </div>
@@ -121,18 +133,54 @@ export default function AccountPage({ params }: PageProps) {
               >
                 Selecione um Sorteio:
               </label>
-              <select
-                id="sorteio-select"
-                value={selectedSorteio}
-                onChange={(e) => setSelectedSorteio(e.target.value)}
-                className="w-full md:w-96 px-4 py-2 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent text-gray-900 bg-white"
-              >
-                {sorteios.map((sorteio) => (
-                  <option key={sorteio.id} value={sorteio.nome_sorteio}>
-                    {sorteio.nome_sorteio}
-                  </option>
-                ))}
-              </select>
+              <div className="flex flex-col md:flex-row gap-4">
+                <select
+                  id="sorteio-select"
+                  value={selectedSorteio}
+                  onChange={(e) => setSelectedSorteio(e.target.value)}
+                  className="flex-1 md:max-w-96 px-4 py-2 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent text-gray-900 bg-white"
+                >
+                  {sorteios.map((sorteio) => (
+                    <option key={sorteio.id} value={sorteio.nome_sorteio}>
+                      {sorteio.nome_sorteio}
+                    </option>
+                  ))}
+                </select>
+                
+                {/* Preview do sorteio selecionado */}
+                {selectedSorteio && (
+                  <div className="bg-white rounded-lg border border-gray-200 p-4 max-w-xs">
+                    {(() => {
+                      const sorteioSelecionado = sorteios.find(s => s.nome_sorteio === selectedSorteio);
+                      return (
+                        <>
+                          <div className="mb-3">
+                            {sorteioSelecionado?.url_media ? (
+                              <img
+                                src={sorteioSelecionado.url_media}
+                                alt={selectedSorteio}
+                                className="w-full h-24 object-cover rounded-lg"
+                              />
+                            ) : (
+                              <div className="w-full h-24 bg-gradient-to-br from-blue-400 to-purple-500 rounded-lg flex items-center justify-center">
+                                <div className="text-center text-white">
+                                  <div className="text-2xl">🎲</div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                          <h3 className="font-semibold text-sm text-gray-900 truncate">
+                            {selectedSorteio}
+                          </h3>
+                          <p className="text-xs text-gray-500">
+                            {participantes.length} participante(s)
+                          </p>
+                        </>
+                      );
+                    })()}
+                  </div>
+                )}
+              </div>
             </div>
 
             {loadingParticipantes ? (

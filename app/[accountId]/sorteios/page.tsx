@@ -111,15 +111,22 @@ export default async function AccountSorteiosPage({ params }: PageProps) {
               key={sorteio.id}
               className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow"
             >
-              {sorteio.url_media && (
-                <div className="mb-4">
+              <div className="mb-4">
+                {sorteio.url_media ? (
                   <img
                     src={sorteio.url_media}
                     alt={sorteio.nome_sorteio}
                     className="w-full h-48 object-cover rounded-lg"
                   />
-                </div>
-              )}
+                ) : (
+                  <div className="w-full h-48 bg-gradient-to-br from-blue-400 to-purple-500 rounded-lg flex items-center justify-center">
+                    <div className="text-center text-white">
+                      <div className="text-4xl mb-2">🎲</div>
+                      <div className="text-lg font-semibold">Sorteio</div>
+                    </div>
+                  </div>
+                )}
+              </div>
               <h2 className="text-xl font-semibold mb-2 text-gray-900">
                 {sorteio.nome_sorteio}
               </h2>
